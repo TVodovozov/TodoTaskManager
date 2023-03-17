@@ -18,7 +18,7 @@ from django.urls import include, path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from todoapp.views import ProjectViewSet, ToDoViewSet
 from userapp.views import UserListAPIView, UserViewSet
@@ -52,4 +52,5 @@ urlpatterns = [
     re_path(r"^swagger(?P<format>\.json|\.yaml)$", schema_view.without_ui(cache_timeout=0), name="schema-json"),
     path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    # path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
 ]
