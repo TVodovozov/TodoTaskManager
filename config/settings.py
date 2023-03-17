@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "userapp",
     "todoapp",
+    "drf_yasg",
+    "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
@@ -135,6 +137,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissions"],
     "DEFAULT_RENDERER_CLASSES": (
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
