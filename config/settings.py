@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     "userapp",
     "todoapp",
     "drf_yasg",
-    "django.contrib.staticfiles",
+    "graphene_django",
 ]
 
 MIDDLEWARE = [
@@ -139,9 +139,7 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissions"],
-
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"],
-
     "DEFAULT_RENDERER_CLASSES": (
         "djangorestframework_camel_case.render.CamelCaseJSONRenderer",
         "djangorestframework_camel_case.render.CamelCaseBrowsableAPIRenderer",
@@ -161,6 +159,9 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 'PAGE_SIZE': 100
 }
+
+GRAPHENE = {"SCHEMA": "config.schema.schema"}
+
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
