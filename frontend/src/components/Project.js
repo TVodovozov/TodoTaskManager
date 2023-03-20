@@ -1,61 +1,86 @@
-import React from 'react'
-import {
-  Link,
-  useParams
-} from "react-router-dom";
+import Table from "react-bootstrap/Table";
+import React from "react";
+import {Link} from "react-router-dom";
+import {Button} from "react-bootstrap";
+import {useState} from "react";
 
-
-const ProjectListItem = ({item}) => {
-    let link_to = `/project/${item.id}`
+const ProjectItem = ({project, allUsers, delete_project}) => {
     return (
         <tr>
-            <td>{item.id}</td>
-            <td>{item.name}</td>
-            <td>{item.repository}</td>
-            <td><Link to={link_to}>Detail</Link></td>
+            <td>
+                {project.id}
+            </td>
+            <td>
+                <Link to={`${project.id}`}>{project.name}</Link>
+            </td>
+            <td>
+                <Link to={`${project.id}`}>{project.link}</Link>
+            </td>
+            <td>
+                {project.users.map((userId) => {
+                    let user = allUsers.find(user => user.id === userId)
+                    return user.username + ' '
+                })}
+            </td>
+            <td>
+                <Button onClick={() => delete_project(project.id)}
+                        type="button" variant="outline-danger" size="sm">Удалить</Button>
+            </td>
         </tr>
     )
 }
 
-const ProjectList = ({items}) => {
-    //console.log(users)
-    return (
-        <table className="table">
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Repository</th>
-                <th></th>
-            </tr>
-            {items.map((item) => <ProjectListItem item={item} />)}
-        </table>
-    )
-}
+const ProjectList = ({projects, users, delete_project}) => {
+    const [value, set_value] = useState("")
+    const filtered_projects = projects.filter((project) => {
+        return project.name.toLowerCase().includes(value.toLowerCase())
+    })
 
-const ProjectUserItem = ({item}) => {
-    return (
-        <li>
-        {item.username} ({item.email})
-    </li>
-    )
-}
-
-const ProjectDetail = ({getProject, item}) => {
-    let { id } = useParams();
-    getProject(id)
-    let users = item.users ? item.users : []
-    console.log(id)
     return (
         <div>
-            <h1>{item.name}</h1>
-            Repository: <a href={item.repository}>{item.repository}</a>
-            <p></p>
-            Users:
-            <ol>
-            {users.map((user) => <ProjectUserItem item={user} />)}
-            </ol>
+            <div className="form-group my-3">
+                <div className="col-3">
+                    <label htmlFor="search">Поиск</label>
+                    <input type="text" name="search" className="form-control"
+                           onChange={(event) => set_value(event.target.value)}/>
+                </div>
+            </div>
+
+            <Table striped bordered hover>
+                <thead key="thead">
+                <tr>
+                    <th>
+                        ID проекта
+                    </th>
+                    <th>
+                        Название проекта
+                    </th>
+                    <th>
+                        Ссылка на репозиторий
+                    </th>
+                    <th>
+                        Авторы
+                    </th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {filtered_projects.map((project) => <ProjectItem key={project.id}
+                                                                 project={project}
+                                                                 allUsers={users}
+                                                                 delete_project={delete_project}/>)}
+                </tbody>
+            </Table>
+            <div className="row">
+                <div>
+                    <Link to='/projects/create'>Создать</Link>
+                </div>
+                <div>
+                    <Link to='/projects/update'>Обновить</Link>
+                </div>
+            </div>
         </div>
     )
 }
 
-export {ProjectDetail, ProjectList}
+export default ProjectList

@@ -1,47 +1,48 @@
-from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.viewsets import ModelViewSet
 
-from .filters import TodoFilter
+from .filters import ProjectFilter, TodoFilter
 from .models import Project, ToDo
-from .serializers import ProjectSerializer, ToDoSerializer
+from .serializers import (
+    ProjectCustomModelSerializerBase,
+    ProjectModelSerializer,
+    ProjectModelSerializerBase,
+    TodoCustomModelSerializer,
+    TodoModelSerializer,
+)
 
 
-class ProjectPagination(PageNumberPagination):
-    page_size = 10
-
-
-class ProjectViewSet(ModelViewSet):
-    serializer_class = ProjectSerializer
+class ProjectModelViewSet(ModelViewSet):
+    # permission_classes = [AllowAny]
     queryset = Project.objects.all()
-    # pagination_class = ProjectPagination
+    serializer_class = ProjectModelSerializer
+    filterset_class = ProjectFilter
 
-    def get_queryset(self):
-        queryset = Project.objects.all()
-        name = self.request.query_params.get("name", None)
-        if name:
-            queryset = queryset.filter(name__contains=name)
-        return queryset
-
-
-class ToDoPagination(PageNumberPagination):
-    page_size = 20
+    def get_serializer_class(self):
+        if self.request.method in ["GET"] and self.request.version == "v2":
+            return ProjectCustomModelSerializerBase
+        return ProjectModelSerializerBase
 
 
-class ToDoViewSet(ModelViewSet):
-    serializer_class = ToDoSerializer
+class TodoModelViewSet(ModelViewSet):
+    # permission_classes = [AllowAny]
     queryset = ToDo.objects.all()
-    # pagination_class = ToDoPagination
-    # filter_backends = [DjangoFilterBackend]
+    serializer_class = TodoModelSerializer
     filterset_class = TodoFilter
 
-    def destroy(self, request, *args, **kwargs):
-        try:
-            instance = self.get_object()
-            instance.is_active = False
-            instance.save()
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        else:
-            return Response(status=status.HTTP_204_NO_CONTENT)
+    def perform_destroy(self, instance):
+        instance.is_active = False
+        instance.save()
+
+    def get_serializer_class(self):
+        if self.request.version == "v2":
+            return TodoCustomModelSerializer
+        return TodoModelSerializer
+
+
+class ProjectLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 10
+
+
+class TodoLimitOffsetPagination(LimitOffsetPagination):
+    default_limit = 20

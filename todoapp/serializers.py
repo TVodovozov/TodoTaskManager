@@ -1,24 +1,39 @@
 from rest_framework.serializers import ModelSerializer
 
+from userapp.serializers import UserModelSerializer
+
 from .models import Project, ToDo
 
 
-class ProjectSerializer(ModelSerializer):
-    # Настройка сериализатора
-    # Настройка Foreign Key
-    # owner = HyperlinkedIdentityField(view_name='user-detail')
-    # Настройка Many to many
-    # users = HyperlinkedRelatedField(many=True, view_name='user-detail', read_only=True)
+class ProjectModelSerializer(ModelSerializer):
+    users = UserModelSerializer(many=True)
 
     class Meta:
         model = Project
         fields = "__all__"
 
 
-class ToDoSerializer(ModelSerializer):
-    # project = HyperlinkedIdentityField(view_name='project-detail')
-    # creator = HyperlinkedIdentityField(view_name='user-detail')
+class ProjectModelSerializerBase(ModelSerializer):
+    class Meta:
+        model = Project
+        fields = "__all__"
+
+
+class ProjectCustomModelSerializerBase(ModelSerializer):
+    class Meta:
+        model = Project
+        fields = ("name",)
+
+
+class TodoModelSerializer(ModelSerializer):
+    class Meta:
+        model = ToDo
+        fields = "__all__"
+
+
+class TodoCustomModelSerializer(ModelSerializer):
+    users = ProjectModelSerializerBase()
 
     class Meta:
         model = ToDo
-        exclude = ("is_active",)
+        fields = "__all__"

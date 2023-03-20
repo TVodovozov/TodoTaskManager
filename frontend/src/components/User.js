@@ -1,28 +1,48 @@
-import React from 'react'
-
+import Table from "react-bootstrap/Table";
+import React from "react";
 
 const UserItem = ({user}) => {
     return (
         <tr>
-            <td>{user.username}</td>
-            <td>{user.firstName}</td>
-            <td>{user.lastName}</td>
-            <td>{user.email}</td>
+            <td>
+                {user.username}
+            </td>
+            <td>
+                {user.firstName}
+            </td>
+            <td>
+                {user.lastName}
+            </td>
+            <td>
+                {user.email}
+            </td>
         </tr>
     )
 }
 
 const UserList = ({users}) => {
     return (
-        <table className="table">
+        <Table striped bordered hover>
+            <thead key="thead">
             <tr>
-                <th>Login</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
+                <th>
+                    Имя пользователя
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Фамилия
+                </th>
+                <th>
+                    Почта
+                </th>
             </tr>
-            {users.map((user) => <UserItem user={user} />)}
-        </table>
+            </thead>
+            <tbody>
+                {users.map((user) => <UserItem key={user.id} user={user} />)}
+            </tbody>
+        </Table>
     )
 }
 

@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 
-export default function Footer() {
-  return (
-    <footer className="footer mt-auto py-3">
-      <div className="container">
-        <span className="text-muted">TODO task manager</span>
-      </div>
-    </footer>
-  );
+const FooterItem = () => {
+    return (
+        <div className="footer  text-end">
+            <small><code><a href="https://t.me">@Dr0nex</a></code></small>
+        </div>
+    )
 }
+
+export default FooterItem
