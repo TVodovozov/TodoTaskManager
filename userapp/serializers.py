@@ -1,16 +1,29 @@
-from django.contrib.auth.models import User
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
-from .models import User
+from .models import CustomUser
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserModelSerializer(ModelSerializer):
     class Meta:
-        model = User
-        fields = ("username", "email")
+        model = CustomUser
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+        )
 
 
-class UserSerializerWithFullName(serializers.ModelSerializer):
+class UserCustomModelSerializer(ModelSerializer):
     class Meta:
-        model = User
-        fields = ("username", "email", "first_name", "last_name")
+        model = CustomUser
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "username",
+            "email",
+            "is_superuser",
+            "is_staff",
+        )

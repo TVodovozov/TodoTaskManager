@@ -14,45 +14,48 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path, re_path
+from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from graphene_django.views import GraphQLView
 from rest_framework import permissions
+from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
-from todoapp.views import ProjectViewSet, ToDoViewSet
-from userapp.views import UserListAPIView, UserViewSet
+from todoapp.views import ProjectModelViewSet, TodoModelViewSet
+from userapp.views import UserModelViewSet
 
-schema_view = get_schema_view(
+scheme_view = get_schema_view(
     openapi.Info(
         title="ToDo",
-        default_version="0.1",
-        description="Documentation to out project",
-        contact=openapi.Contact(email="admin@admin.local"),
+        default_version="v1",
+        description="Docs",
+        contact=openapi.Contact(email="test@gmail.com"),
         license=openapi.License(name="MIT License"),
     ),
     public=True,
-    permission_classes=(permissions.IsAdminUser,),
+    permission_classes=(permissions.AllowAny,),
 )
 
-
 router = DefaultRouter()
-router.register("users", UserViewSet)
-router.register("todos", ToDoViewSet)
-router.register("projects", ProjectViewSet)
+router.register("users", UserModelViewSet)
+router.register("projects", ProjectModelViewSet)
+router.register("todos", TodoModelViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api-auth/", include("rest_framework.urls")),
     path("api/", include(router.urls)),
+    path("api-token/", obtain_auth_token, name="token"),
+    path("api-auth/", include("rest_framework.urls")),
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/token/verify/", TokenVerifyView.as_view(), name="token_verify"),
-    re_path(r"^api/(?P<version>\d\.\d)/users/$", UserListAPIView.as_view()),
-    re_path(r"^swagger(?P<format>\.json|\.yaml)$", schema_view.without_ui(cache_timeout=0), name="schema-json"),
-    path("swagger/", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),
-    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    # path('', include('userapp.urls')),
+    path("api/users/v1", include("userapp.urls", namespace="v1")),
+    path("api/users/v2", include("userapp.urls", namespace="v2")),
+    path("swagger<str:format>/", scheme_view.without_ui()),
+    path("swagger/", scheme_view.with_ui("swagger")),
+    path("redoc/", scheme_view.with_ui("redoc")),
     path("graphql/", GraphQLView.as_view(graphiql=True)),
 ]

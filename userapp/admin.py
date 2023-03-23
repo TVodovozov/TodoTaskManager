@@ -1,6 +1,9 @@
-# Register your models here.
 from django.contrib import admin
 
-from .models import User
+from todoapp.models import Project, ToDo
+from userapp.models import CustomUser
 
-admin.site.register(User)
+# Register your models here.
+admin.site.register(CustomUser)
+admin.site.register(Project)
+admin.site.register(ToDo)
